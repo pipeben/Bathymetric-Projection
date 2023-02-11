@@ -18,18 +18,24 @@ REQUIRED FILES
     Source: General Bathymetric Charts of the Oceans (GEBCO)
     https://www.gebco.net/ 
     
-R-CODE
-The file ‘Rcode_BP.R’ takes you through the six steps of BP described in Benavides et al (2023) 
-It explains each geospatial and statistic tool required during each step using ‘env_vars.nc’ and ‘bat.gif’ within a simplified example
+3. R-CODE
+    The file ‘Rcode_BP.R’ takes you through the six steps of BP described in Benavides et al (2023) 
+    It explains each geospatial and statistic tool required during each step using ‘env_vars.nc’ and ‘bat.gif’ within a simplified example
+
 
 RESULTING FILES
 1. ‘chl_bottom_jan.tif’ = Ocean bottom layer for variable chlorophyll in January resulting after BP processing
+
 2. ph_bottom_jan.tif = Ocean bottom layer for variable ph in January resulting after BP processing
+
 3. my_bottom_layers.tif = files "chl_bottom_jan.tif" and "ph_bottom_jan.tif" stacked and saved into a new raster tif
+
 
 NOTES
 1. As a simplified example this code produces ocean bottom layers for chl and ph during january
+
 2. You can just replace name "jan" by "feb" or any months’ abbreviation in the code to obtain ocean bottom layers for each month
+
 3. As a simplified example this code produces ocean bottom layers for chl and ph during janary across the Colombian Pacific Ocean throughout 25 depth classes (0.5 to 108.03 m). You can produce ocean bottom layers for any ocean variable, trough any set of depth classes, across any oceanic area in the world and, also with different spatial and temporal (y-m-d) resolutions as long as the original data allows it.
 
 ***THANK YOU FOR USING BATHYMETRIC PROJECTION FOR YOUR RESEARCH***
