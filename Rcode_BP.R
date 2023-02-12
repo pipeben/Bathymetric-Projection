@@ -1,17 +1,18 @@
 # This R-script provides the codes and explanation of GIS tools needed to 
-# perform Bathymetric Projection (BP) on environmental ocean variables measured 
-# as vertical layers throughout the depth profile (depth dimension) of the ocean
-# The result of BP is an ocean only-bottom layer appropriate to characterize benthic
-# environments
+# perform Bathymetric Projection (BP) on environmental ocean variables measured or modeled
+# as vertical layers throughout the depth profile (depth dimension) of the ocean.
+# The result of BP are ocean bottom layera appropriate to characterize benthic
+# environments and perform Species Distribution Models on benthic species.
 
 # For more detailed information on the method please read Benavides et al (2023)
 # "Improving spatiotemporal models for marine shrimp species by appropriately
-# "projecting benthic environmental conditions" (Cite here)
+# "projecting benthic environmental conditions" (Cite here when it is published)
 
-# Please note that this is an exemplifying and simplyfied script using only two 
+# Please note that this is an reproducible example that uses only two 
 # environmental # variables: clorophyl-a (chl) and pH trough 25 
 # depth classes (0.5 - 108.03 m depth)
-# For your personal purposes, you can set any configuration of variables and depths 
+# For your personal purposes, you can use any variables and depths as long 
+# as you have the data
 
 
 # Required files are included in the Bathymetric GitHub Repository 
@@ -36,19 +37,21 @@ env_vars = nc_open("env_vars.nc")
 # https://data.marine.copernicus.eu/product/GLOBAL_MULTIYEAR_BGC_001_029/description 
 
 # Explore object "env_vars". Check variable names, depths
-# Time span, spatial and temporal resolution, projection and extent.
-# Make sure that set up works for you
+# Time span, spatial/temporal resolution, projection and spatial extent.
+# Make sure all of it is correct for your purposes.
 env_vars
 
 # Load Bathymetric layer
 bat = raster("bat.tif")
 
+#Source of this layer is the General Bathymetric Charts of the Oceans (GEBCO)
+https://www.gebco.net/
 #__________________________________________________________________________________________________________________
 
 
-#:: So far we have loaded the required files. Now we move forward trough the 6
-# Steps of BP
 
+#:: So far we have loaded the required packages and files. Now we move forward on trough the 6
+# Steps of BP
 
 
 #__________________________________________________________________________________________________________________
@@ -56,26 +59,27 @@ bat = raster("bat.tif")
 # Select environmental variables and depths. Crop stud area, resample, extract
 # and set months apart
 
-# Select chl as our target variable for depth 1 (0-0.45 m depth)
+# Select chl as our target variable for depth 1 (0 to 0.5 m depth)
 chl1 = brick("env_vars.nc",varname = "chl",level=1)
+#check the plot
 plot(chl1)
 
-# 1.1 Crop the resulting raster brick "chl1" to the target study area. Here the study 
-# Area is the Coast of the Colombian Pacific Ocean (0.5 to 108.03 m depth)
-ext = c(-80, -76, 1, 8)
+# 1.1 Crop the resulting raster brick "chl1" to the target study area. For this example the study 
+# area is the Coast of the Colombian Pacific Ocean. (up to 34 km offshore)
+ext = c(-80, -76, 1, 8) #These are the coordinates that define the study area
 chl1 = crop(chl1,ext)
 plot(chl1)
 
-# We also need to crop the Bathymetric layer
+# We also need to crop the Bathymetric layer to the study area
 bat = crop (bat,chl1)
 plot(bat)
 
 # 1.2 Extract target months. For that purpose we create sequences to extract the index 
-# position of for each month within the chl1 raster brick. Pay attention to how
+# position of for each month within the chl1 time series. check how many
 # months are included in your full time series and use this value as the length
-# of the sequence each 12 months.
+# of the sequence, each 12 months.
 
-env_vars # 36 months - 3 years
+env_vars # For env_vars we have 36 months (3 years 2015 to 2017)
 
 seq_jan = seq(1,36,12) 
 seq_feb = seq(2,36,12) 
@@ -103,7 +107,8 @@ chl1_jan = chl1[[seq_jan]]
 chl1_jan = calc(chl1, fun = mean, na.rm=T)
 plot(chl1_jan)
 # :: The reulting raster is the multiannual monthly mean of variable chl1
-# for depth 1 (0.5 - 108.03 m depth)
+# for depth 1 (0.5 to -1.5
+m depth)
 
 # 2.2 Resample chl_1jan to the same resolution of the bathymetric layer
 chl1_jan = resample(chl1_jan,bat,method="bilinear")
@@ -135,7 +140,7 @@ chl1 = brick("env_vars.nc",varname = "chl",level=1) ; chl1 = crop(chl1,ext) ; ch
 chl1 = brick("env_vars.nc",varname = "chl",level=1) ; chl1 = crop(chl1,ext) ; chl1_dec = chl1[[seq_dec]] ; chl1_dec = calc(chl1_dec,mean,na.rm=T); chl1_dec = resample(chl1_dec,bat)
 
 
-#:: Restulting rasters (chl1_feb to chl1_dec) are the multiannual monthly mean layers of chl for each month in depth 1
+#:: Restulting rasters (chl1_feb to chl1_dec) are the multiannual monthly mean layers of chl1 for each month at depth 1
 
 
 # 2.4 Repeat the process for all depths
@@ -456,14 +461,14 @@ chl25 = brick("env_vars.nc",varname = "chl",level=25) ; chl25 = crop(chl25,ext) 
 
 
 
-#:: Resulting rasters (chl1 to chl23) are the multiannual monthly mean layers of chl for each month from depth 1 to depth 23
+#:: Resulting rasters (chl1 to chl53) are the multiannual monthly mean layers of chl for each month at depths 1 to 25
 # (0.5 to 108.03 m depth)
 
 
 
 #__________________________________________________________________________________________________________________
 # STEP 3 chl------------------------------------------------------------------
-# Reclassify Bathymetric layer using depths in the restulting rasters from step 2 as new classes
+# Reclassify Bathymetric layer using depths in the restulting rasters from step 2 as new reclassification classes
 
 # 3.1 Create a reclassification matrix for target depths (0.5 to 108.03 m depth)
 reclass_m <- matrix(c(-Inf, -109.0, NA,
@@ -494,13 +499,15 @@ reclass_m <- matrix(c(-Inf, -109.0, NA,
                    -0.509, 0, 1,
                    0.1, Inf, NA), ncol=3, byrow=TRUE)
 
-##:: Note that values above 0m and below -13.99m are set to NA
+##:: Note that values above 0m and below -109 m are set to be NA (We dont need those)
 
 # 3.2 Reclassify Bathymetric layer using "reclass_m"
 bat_reclass <- reclassify(bat,reclass_m)
 #check the plot
 plot(bat_reclass)
 
+##:: This resulting raster "bat_reclass" contains the reclassification depth classes 1 to 25
+# that we will use in STEP 3 to extract specific values out of the chlorophyll layers
 
 # 3.3 #extract values from the reclassified raster for each new depth class
 bat_depth1 = raster::clamp (bat_reclass,lower = 1, upper= 1,useValues=FALSE)
@@ -536,10 +543,7 @@ bat_depth25 = raster::clamp (bat_reclass,lower = 25, upper= 25,useValues=FALSE)
 
 #__________________________________________________________________________________________________________________
 # STEP 4 chl------------------------------------------------------------------
-# 4.1 Extract data from chl at each depth using reclassified depth classes as masks 
-# for each month, by first aligning spatial extents that might have slightly 
-# moved during during last steps
-
+# 4.1 Extract data from chl at each depth using reclassified depth classes from 3.3 as masks 
 chl_depth_1_jan = raster::mask(chl23_jan,bat_depth1)
 chl_depth_2_jan = raster::mask(chl2_jan,bat_depth2)
 chl_depth_3_jan = raster::mask(chl3_jan,bat_depth3)
@@ -584,7 +588,7 @@ plot(chl_bottom_jan) # This is the ocean bottom layer for chl and in january
      
 
 # 5.2 (Optional) Since some missing data can occur from the original NetCdf we
-# can interpolate those using Inverse Distance Weighting or any interpolation/imputation
+# can interpolate using Inverse Distance Weighting, or any interpolation/imputation
 # method of your perference
 coords_chl_bottom_jan = xyFromCell(chl_bottom_jan,c(seq(1,72625,1))) ; table_raster_chl_bottom_jan=as.data.frame(chl_bottom_jan)
 # 72625 is the total ammount of cells in the raster
@@ -594,18 +598,18 @@ table_raster_chl_bottom_jan = table_raster_chl_bottom_jan[complete.cases(table_r
 model_chl_bottom_jan<- gstat(id = "chl_bottom_jan", formula = chl_bottom_jan~1, locations = ~x+y, data=table_raster_chl_bottom_jan, 
                        nmax=24)
 chl_bottom_jan<- interpolate(chl_bottom_jan, model_chl_bottom_jan)
-chl_bottom_jan <- mask(chl_bottom_jan, bat_reclass)
+chl_bottom_jan <- mask(chl_bottom_jan, bat_reclass) #this is the final interpolated raster
 plot(chl_bottom_jan)
 
-# 5.3 Save results from 5.2 in a new raster tif file
+# 5.3 Save results from 5.2 in a new raster file
 writeRaster(chl_bottom_jan,"chl_bottom_jan.tif") 
 
 # NOTE: This is the final ocean bottom layer for chl in January that you can use
 # as a predictor for benthic species distribution models. But you still need
 # to produce bottom layers for the rest of months
 
-# 5.4 Just replace "jan" by "feb", "mar" and so on until "dec", and run all the 
-# code for each month to produce the bottom chl layers for each month
+# 5.4 You can just replace "jan" by "feb", or any month abbreviation and repeat these steps 
+# to produce the bottom chl layers for each month
 
 #__________________________________________________________________________________________________________________
 
@@ -614,7 +618,7 @@ writeRaster(chl_bottom_jan,"chl_bottom_jan.tif")
 # REPEAT PROCESS FOR OTHER VARIABLES --------------------------------------
 
 
-#Repeat the process for pH, the second variable in the env_vars NetCdf
+#Repeat the process for pH, the second variable in "env_vars.nc" 
 
 
 #__________________________________________________________________________________________________________________
@@ -622,24 +626,24 @@ writeRaster(chl_bottom_jan,"chl_bottom_jan.tif")
 # Select environmental variables and depths. Crop stud area, resample, extract
 # and set months apart
 
-# Select ph as our target variable for depth 1 (0-0.45 m depth)
+# Select ph as our target variable for depth 1 (0.5 to 1.5 m depth)
 ph1 = brick("env_vars.nc",varname = "ph",level=1)
 plot(ph1)
 
 # 1.1 Crop the resulting raster brick "ph1" to the target study area. Here the study 
-# Area is the Coast of the Colombian Pacific Ocean (0.5 to 108.03 m depth)
+# Area is the Coast of the Colombian Pacific Ocean
 ext = c(-80, -76, 1, 8)
 ph1 = crop(ph1,ext)
 plot(ph1)
 
-# We also need to crop the Bathymetric layer
+# We also need to crop the Bathymetric layer to the study area.
 bat = crop (bat,ph1)
 plot(bat)
 
 # 1.2 Extract target months. For that purpose we create sequences to extract the index 
-# position of for each month within the ph1 raster brick. Pay attention to how
+# position of for each month within the raster brick time series. Check how many
 # months are included in your full time series and use this value as the length
-# of the sequence each 12 months.
+# of the sequence, each 12 months.
 
 env_vars # 36 months - 3 years
 
@@ -669,7 +673,7 @@ ph1_jan = ph1[[seq_jan]]
 ph1_jan = calc(ph1, fun = mean, na.rm=T)
 plot(ph1_jan)
 # :: The reulting raster is the multiannual monthly mean of variable ph1
-# for depth 1 (0.5 - 108.03 m depth)
+# for depth 1 (0.5 - 1.5 m depth)
 
 # 2.2 Resample ph_1jan to the same resolution of the bathymetric layer
 ph1_jan = resample(ph1_jan,bat,method="bilinear")
