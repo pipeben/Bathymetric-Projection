@@ -2,12 +2,12 @@
 
 This is an R-code that implements the Bathymetric Projection Method (BP) in Benavides et al (2023)
 "Improving spatiotemporal distribution models for marine shrimp species by appropriately projecting benthic environmental conditions"
-BP allows to project environmental ocean layers with depth dimension into only-bottom ocean 
-Layers.
-These bottom layers are useful as predictors for Species Distribution Models for benthic species
+BP allows to project environmental ocean layers with depth dimension (measured or modeled throughout the ocean profile depth at different
+depths or depth classes) into bottom ocean layers. The bottom layers produced by BPare useful as predictors for Species Distribution Models 
+for benthic species
 
-We provide a simplified code with small example files that allow to run BP on environmental
-ocean variables with depth dimension (variables measured or modeled throughout the ocean depth profile)
+We provide a reproducible example including R-code and small files that allow to easily run and understand BP on environmental
+ocean variables with depth dimension
 
 REQUIRED FILES
 1. ‘env_vars.nc’ = NetCdf file with variables chlorophyll-a (chl) and pH with monthly resolution throughout 25 depth classes (0.5 to 108.03 m depth)
