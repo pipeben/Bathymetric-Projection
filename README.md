@@ -1,5 +1,6 @@
-Bathymetric-Projection
-R-code that implements the Bathymetric Projection Method (BP). Benavides et al (2023)
+#Bathymetric-Projection
+
+This is an R-code that implements the Bathymetric Projection Method (BP). Benavides et al (2023)
 "Improving spatiotemporal distribution models for marine shrimp species by appropriately projecting benthic environmental conditions"
 BP allows to project environmental ocean layers with depth dimension into only-bottom ocean 
 Layers.
