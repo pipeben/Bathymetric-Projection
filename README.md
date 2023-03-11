@@ -1,5 +1,7 @@
 #Bathymetric-Projection
 
+(Note: You might also be interested in the Bathymetric Projection code https://github.com/pipeben/Bathymetric-Projection)
+
 This is an R-code that implements the Bathymetric Projection Method (BP) in Benavides et al (2023)
 "Improving spatiotemporal distribution models for marine shrimp species by appropriately projecting benthic environmental conditions"
 BP allows to project environmental ocean layers with depth dimension (measured or modeled throughout the ocean profile depth at different
