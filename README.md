@@ -1,7 +1,5 @@
 #Bathymetric-Projection
 
-(Note: You might also be interested in the Bathymetric Projection code https://github.com/pipeben/Bathymetric-Projection)
-
 This is an R-code that implements the Bathymetric Projection Method (BP). 
 This method allows to project environmental ocean layers with depth dimension (measured or modeled throughout the ocean profile depth at different depths or depth classes) into bottom ocean layers. The bottom layers produced by the BP method are useful as predictors for Species Distribution Models 
 for benthic species
