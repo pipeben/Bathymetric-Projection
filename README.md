@@ -1,8 +1,8 @@
 #Bathymetric-Projection
 
 This is an R-code that implements the Bathymetric Projection Method (BP). 
-This method allows to project environmental ocean layers with depth dimension (measured or modeled throughout the ocean profile depth at different depths or depth classes) into bottom ocean layers. The bottom layers produced by the BP method are useful as predictors for Species Distribution Models 
-for benthic species
+This method allows to project environmental ocean layers with depth dimension (measured or modeled throughout the water column of the ocean (depth profile) at different depths or depth classes) to the ocean bottom, and therefore, transform it to an exclusively seafloor layer. The bottom layers produced by the BP method are useful to employ as predictors for Species Distribution Models 
+of benthic species.
 
 We provide a reproducible example including R-code and small files that allow to easily run and understand BP on environmental
 ocean variables with depth dimension
