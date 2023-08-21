@@ -8,7 +8,7 @@ authors:
   given-names: "John Josephraj"
   orcid: "https://orcid.org/0000-0002-9195-4883"
 title: "Bathymetric Projection (BP)"
-version: 1.0
+version: 1.2
 doi: https://doi.org/10.5281/zenodo.8269817
-date-released: 2022-12-18
+date-released: 2023-08-21
 url: "https://github.com/pipeben/Bathymetric-Projection"
